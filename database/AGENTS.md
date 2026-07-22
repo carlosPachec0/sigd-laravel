@@ -21,6 +21,10 @@ The database layer contains migrations, factories, and seeders that define the a
   - Email: admin@example.com
   - Role: ADMIN
 
+## Skills
+
+- [Migration Creator](../.commandcode/skills/migration-creator/SKILL.md) - Creates database migrations with CLI commands and documentation
+
 ## Schema Design
 
 ### Users Table

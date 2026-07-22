@@ -25,6 +25,10 @@ The Domain layer contains the core business logic, entities, contracts, and doma
 - `InvalidCredentialsException.php`: Thrown when authentication credentials are invalid
 - `UserAlreadyExistsException.php`: Thrown when attempting to create a user with an existing email
 
+## Skills
+
+- [Entity Creator](../../.commandcode/skills/entity-creator/SKILL.md) - Creates Domain entities following SIGD Laravel patterns
+
 ## Conventions
 - All classes use strict typing (`declare(strict_types=1)`)
 - Exceptions extend RuntimeException
