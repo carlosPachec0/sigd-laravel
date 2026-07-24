@@ -209,6 +209,3 @@ Stored as constant strings in `App\Domain\Constants\UserRoles`:
 ## License
 
 MIT
-
-
-## test
