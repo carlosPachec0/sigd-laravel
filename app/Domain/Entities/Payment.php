@@ -9,6 +9,7 @@ class Payment extends Model
     protected $table = 'payments';
 
     protected $fillable = [
+        'subject',
         'student_id',
         'amount'
     ];

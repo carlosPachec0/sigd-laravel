@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('academies', function (Blueprint $table) {
             $table->id();
             $table->uuid('user_id');
-            $table->text('name', 100);
-            $table->text('discipline', 100);
+            $table->string('name', 100);
+            $table->string('discipline', 100);
             $table->decimal('registration_fee', 10, 2)->default(0.00);
             $table->decimal('monthly_fee', 10, 2)->default(0.00);
             $table->decimal('class_fee', 10, 2)->default(0.00);

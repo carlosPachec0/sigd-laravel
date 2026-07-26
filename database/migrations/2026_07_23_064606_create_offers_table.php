@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('offers', function (Blueprint $table) {
             $table->id();
             $table->integer('academy_id')->unsigned();
-            $table->text('title', 100);
-            $table->text('description');
+            $table->string('title', 100);
+            $table->string('description');
             $table->decimal('price', 10, 2);
             $table->timestamps();
             $table->softDeletes();

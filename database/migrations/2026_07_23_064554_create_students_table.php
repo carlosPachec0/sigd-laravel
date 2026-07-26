@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('students', function (Blueprint $table) {
             $table->id();
             $table->integer('academy_id')->unsigned();
-            $table->text('name', 100);
+            $table->string('name', 100);
             $table->enum('gender', ['Male', 'Female']);
             $table->date('birth_date');
             $table->decimal('height', 10, 2)->nullable();

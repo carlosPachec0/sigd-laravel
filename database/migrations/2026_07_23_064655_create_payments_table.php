@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->uuid('id')->primary();
+            $table->string('subject', 100)->default("");
             $table->integer('student_id')->unsigned();
             $table->decimal('amount', 10, 2);
             $table->timestamps();
