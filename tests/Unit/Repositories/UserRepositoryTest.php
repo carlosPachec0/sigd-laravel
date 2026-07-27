@@ -7,6 +7,7 @@ namespace Tests\Unit\Repositories;
 use App\Domain\Entities\User;
 use App\Infrastructure\Repositories\UserRepository;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Str;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -49,24 +50,19 @@ class UserRepositoryTest extends TestCase
     public function it_creates_a_new_user(): void
     {
         $user = $this->repository->create([
+            'id' => (string) Str::uuid(),
             'email' => 'newuser@example.com',
             'password' => 'hashed_password',
-            'first_name' => 'Jane',
-            'last_name' => 'Doe',
-            'role' => 'Standard',
+            'name' => 'Jane Doe',
         ]);
 
         $this->assertInstanceOf(User::class, $user);
         $this->assertSame('newuser@example.com', $user->email);
-        $this->assertSame('Jane', $user->first_name);
-        $this->assertSame('Doe', $user->last_name);
-        $this->assertSame('Standard', $user->role);
+        $this->assertSame('Jane Doe', $user->name);
 
         $this->assertDatabaseHas('users', [
             'email' => 'newuser@example.com',
-            'first_name' => 'Jane',
-            'last_name' => 'Doe',
-            'role' => 'Standard',
+            'name' => 'Jane Doe',
         ]);
     }
 }
