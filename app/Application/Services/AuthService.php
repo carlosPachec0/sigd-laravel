@@ -31,19 +31,15 @@ final class AuthService
         $user = $this->userRepository->create([
             'email' => $dto->email,
             'password' => $dto->password,
-            'first_name' => $dto->firstName,
-            'last_name' => $dto->lastName,
-            'role' => $dto->role,
+            'name' => $dto->name,
         ]);
 
         Auth::guard('web')->login($user);
 
         return new SignupResponseDto(
-            id: $user->id,
+            id: (string) $user->id,
             email: $user->email,
-            firstName: $user->first_name,
-            lastName: $user->last_name,
-            role: $user->role,
+            name: $user->name,
         );
     }
 
@@ -58,11 +54,9 @@ final class AuthService
         Auth::guard('web')->login($user);
 
         return new LoginResponseDto(
-            id: $user->id,
+            id: (string) $user->id,
             email: $user->email,
-            firstName: $user->first_name,
-            lastName: $user->last_name,
-            role: $user->role,
+            name: $user->name,
         );
     }
 }

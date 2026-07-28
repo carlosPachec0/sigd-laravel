@@ -2,10 +2,10 @@
 
 namespace Database\Factories\Domain\Entities;
 
-use App\Domain\Constants\UserRoles;
 use App\Domain\Entities\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 /**
  * @extends Factory<User>
@@ -22,11 +22,10 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
-            'first_name' => fake()->firstName(),
-            'last_name' => fake()->lastName(),
+            'id' => (string) Str::uuid(),
+            'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
             'password' => static::$password ??= Hash::make('password'),
-            'role' => UserRoles::STANDARD,
         ];
     }
 }

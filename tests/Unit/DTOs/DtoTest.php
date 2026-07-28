@@ -19,18 +19,14 @@ class DtoTest extends TestCase
         $data = [
             'email' => 'test@example.com',
             'password' => 'Password123!',
-            'first_name' => 'John',
-            'last_name' => 'Doe',
-            'role' => 'Standard',
+            'name' => 'John Doe',
         ];
 
         $dto = SignupRequestDto::fromArray($data);
 
         $this->assertSame('test@example.com', $dto->email);
         $this->assertSame('Password123!', $dto->password);
-        $this->assertSame('John', $dto->firstName);
-        $this->assertSame('Doe', $dto->lastName);
-        $this->assertSame('Standard', $dto->role);
+        $this->assertSame('John Doe', $dto->name);
     }
 
     #[Test]
@@ -39,9 +35,7 @@ class DtoTest extends TestCase
         $dto = new SignupRequestDto(
             email: 'test@example.com',
             password: 'Password123!',
-            firstName: 'John',
-            lastName: 'Doe',
-            role: 'Standard',
+            name: 'John Doe',
         );
 
         $array = $dto->toArray();
@@ -49,9 +43,7 @@ class DtoTest extends TestCase
         $this->assertSame([
             'email' => 'test@example.com',
             'password' => 'Password123!',
-            'first_name' => 'John',
-            'last_name' => 'Doe',
-            'role' => 'Standard',
+            'name' => 'John Doe',
         ], $array);
     }
 
@@ -59,21 +51,17 @@ class DtoTest extends TestCase
     public function signup_response_dto_converts_to_array(): void
     {
         $dto = new SignupResponseDto(
-            id: 1,
+            id: '1',
             email: 'test@example.com',
-            firstName: 'John',
-            lastName: 'Doe',
-            role: 'Standard',
+            name: 'John Doe',
         );
 
         $array = $dto->toArray();
 
         $this->assertSame([
-            'id' => 1,
+            'id' => '1',
             'email' => 'test@example.com',
-            'first_name' => 'John',
-            'last_name' => 'Doe',
-            'role' => 'Standard',
+            'name' => 'John Doe',
         ], $array);
     }
 
@@ -95,21 +83,17 @@ class DtoTest extends TestCase
     public function login_response_dto_converts_to_array(): void
     {
         $dto = new LoginResponseDto(
-            id: 1,
+            id: '1',
             email: 'test@example.com',
-            firstName: 'John',
-            lastName: 'Doe',
-            role: 'Standard',
+            name: 'John Doe',
         );
 
         $array = $dto->toArray();
 
         $this->assertSame([
-            'id' => 1,
+            'id' => '1',
             'email' => 'test@example.com',
-            'first_name' => 'John',
-            'last_name' => 'Doe',
-            'role' => 'Standard',
+            'name' => 'John Doe',
         ], $array);
     }
 }

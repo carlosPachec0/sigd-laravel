@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Auth;
 
-use App\Domain\Constants\UserRoles;
 use App\Domain\Entities\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
@@ -24,9 +23,7 @@ class SignupTest extends TestCase
             'email' => 'newuser@example.com',
             'password' => 'StrongPass1!',
             'password_confirmation' => 'StrongPass1!',
-            'first_name' => 'John',
-            'last_name' => 'Doe',
-            'role' => UserRoles::STANDARD,
+            'name' => 'John Doe',
         ];
     }
 
@@ -38,7 +35,7 @@ class SignupTest extends TestCase
         $response->assertStatus(201)
             ->assertJsonStructure([
                 'message',
-                'data' => ['id', 'email', 'first_name', 'last_name', 'role'],
+                'data' => ['id', 'email', 'name'],
                 'status',
                 'errors',
             ])
@@ -50,9 +47,7 @@ class SignupTest extends TestCase
 
         $this->assertDatabaseHas('users', [
             'email' => 'newuser@example.com',
-            'first_name' => 'John',
-            'last_name' => 'Doe',
-            'role' => UserRoles::STANDARD,
+            'name' => 'John Doe',
         ]);
     }
 
@@ -121,16 +116,6 @@ class SignupTest extends TestCase
                 'message' => 'Validation failed.',
                 'status' => 422,
             ]);
-    }
-
-    #[Test]
-    public function it_rejects_invalid_role(): void
-    {
-        $payload = array_merge($this->validPayload, ['role' => 'InvalidRole']);
-
-        $response = $this->postJson('/api/v1/auth/signup', $payload);
-
-        $response->assertStatus(422);
     }
 
     #[Test]
