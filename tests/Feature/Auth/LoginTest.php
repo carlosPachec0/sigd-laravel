@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Auth;
 
-use App\Domain\Constants\UserRoles;
 use App\Domain\Entities\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
@@ -24,9 +23,7 @@ class LoginTest extends TestCase
         $this->user = User::factory()->create([
             'email' => 'user@example.com',
             'password' => Hash::make('Password123!'),
-            'first_name' => 'Jane',
-            'last_name' => 'Doe',
-            'role' => UserRoles::STANDARD,
+            'name' => 'Jane Doe',
         ]);
     }
 
@@ -41,7 +38,7 @@ class LoginTest extends TestCase
         $response->assertStatus(200)
             ->assertJsonStructure([
                 'message',
-                'data' => ['id', 'email', 'first_name', 'last_name', 'role'],
+                'data' => ['id', 'email', 'name'],
                 'status',
                 'errors',
             ])
@@ -145,9 +142,7 @@ class LoginTest extends TestCase
             ->assertJson([
                 'data' => [
                     'email' => 'user@example.com',
-                    'first_name' => 'Jane',
-                    'last_name' => 'Doe',
-                    'role' => UserRoles::STANDARD,
+                    'name' => 'Jane Doe',
                 ],
             ]);
     }

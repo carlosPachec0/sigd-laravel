@@ -7,11 +7,9 @@ namespace App\Application\DTOs;
 final readonly class LoginResponseDto
 {
     public function __construct(
-        public int $id,
+        public string $id,
         public string $email,
-        public string $firstName,
-        public string $lastName,
-        public string $role,
+        public string $name,
     ) {}
 
     public function toArray(): array
@@ -19,9 +17,7 @@ final readonly class LoginResponseDto
         return [
             'id' => $this->id,
             'email' => $this->email,
-            'first_name' => $this->firstName,
-            'last_name' => $this->lastName,
-            'role' => $this->role,
+            'name' => $this->name,
         ];
     }
 }

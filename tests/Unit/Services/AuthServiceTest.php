@@ -43,11 +43,9 @@ class AuthServiceTest extends TestCase
     private function createMockUser(array $attributes = []): User|MockInterface
     {
         $user = Mockery::mock(User::class)->makePartial();
-        $user->id = $attributes['id'] ?? 1;
+        $user->id = $attributes['id'] ?? '1';
         $user->email = $attributes['email'] ?? 'test@example.com';
-        $user->first_name = $attributes['first_name'] ?? 'John';
-        $user->last_name = $attributes['last_name'] ?? 'Doe';
-        $user->role = $attributes['role'] ?? 'Standard';
+        $user->name = $attributes['name'] ?? 'John Doe';
         $user->password = $attributes['password'] ?? Hash::make('password');
 
         return $user;
@@ -59,17 +57,13 @@ class AuthServiceTest extends TestCase
         $dto = new SignupRequestDto(
             email: 'test@example.com',
             password: 'Password123!',
-            firstName: 'John',
-            lastName: 'Doe',
-            role: 'Standard',
+            name: 'John Doe',
         );
 
         $user = $this->createMockUser([
-            'id' => 1,
+            'id' => '1',
             'email' => 'test@example.com',
-            'first_name' => 'John',
-            'last_name' => 'Doe',
-            'role' => 'Standard',
+            'name' => 'John Doe',
         ]);
 
         $this->userRepository
@@ -93,11 +87,9 @@ class AuthServiceTest extends TestCase
 
         $result = $this->authService->signup($dto);
 
-        $this->assertSame(1, $result->id);
+        $this->assertSame('1', $result->id);
         $this->assertSame('test@example.com', $result->email);
-        $this->assertSame('John', $result->firstName);
-        $this->assertSame('Doe', $result->lastName);
-        $this->assertSame('Standard', $result->role);
+        $this->assertSame('John Doe', $result->name);
     }
 
     #[Test]
@@ -106,9 +98,7 @@ class AuthServiceTest extends TestCase
         $dto = new SignupRequestDto(
             email: 'existing@example.com',
             password: 'Password123!',
-            firstName: 'John',
-            lastName: 'Doe',
-            role: 'Standard',
+            name: 'John Doe',
         );
 
         $existingUser = $this->createMockUser(['email' => 'existing@example.com']);
@@ -133,11 +123,9 @@ class AuthServiceTest extends TestCase
         );
 
         $user = $this->createMockUser([
-            'id' => 1,
+            'id' => '1',
             'email' => 'test@example.com',
-            'first_name' => 'John',
-            'last_name' => 'Doe',
-            'role' => 'Standard',
+            'name' => 'John Doe',
             'password' => Hash::make('Password123!'),
         ]);
 
@@ -157,11 +145,9 @@ class AuthServiceTest extends TestCase
 
         $result = $this->authService->login($dto);
 
-        $this->assertSame(1, $result->id);
+        $this->assertSame('1', $result->id);
         $this->assertSame('test@example.com', $result->email);
-        $this->assertSame('John', $result->firstName);
-        $this->assertSame('Doe', $result->lastName);
-        $this->assertSame('Standard', $result->role);
+        $this->assertSame('John Doe', $result->name);
     }
 
     #[Test]
