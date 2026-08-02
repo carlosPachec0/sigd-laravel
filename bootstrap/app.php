@@ -1,12 +1,17 @@
 <?php
 
 use App\Domain\Exceptions\InvalidCredentialsException;
+use App\Domain\Exceptions\InvalidCurrentPasswordException;
+use App\Domain\Exceptions\InvalidPasswordResetTokenException;
+use App\Domain\Exceptions\InvalidVerificationLinkException;
 use App\Domain\Exceptions\UserAlreadyExistsException;
 use App\Infrastructure\Http\Middleware\ForceJsonResponse;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Routing\Exceptions\InvalidSignatureException;
 use Illuminate\Validation\ValidationException;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -18,8 +23,6 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->api(prepend: [
             ForceJsonResponse::class,
         ]);
-
-        $middleware->statefulApi();
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(
@@ -53,11 +56,56 @@ return Application::configure(basePath: dirname(__DIR__))
             ], 401);
         });
 
+        $exceptions->renderable(function (InvalidCurrentPasswordException $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+                'data' => null,
+                'status' => 422,
+                'errors' => [$e->getMessage()],
+            ], 422);
+        });
+
+        $exceptions->renderable(function (InvalidVerificationLinkException $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+                'data' => null,
+                'status' => 403,
+                'errors' => [$e->getMessage()],
+            ], 403);
+        });
+
+        $exceptions->renderable(function (InvalidPasswordResetTokenException $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+                'data' => null,
+                'status' => 422,
+                'errors' => [$e->getMessage()],
+            ], 422);
+        });
+
+        $exceptions->renderable(function (AuthenticationException $e) {
+            return response()->json([
+                'message' => 'Unauthenticated.',
+                'data' => null,
+                'status' => 401,
+                'errors' => ['Unauthenticated.'],
+            ], 401);
+        });
+
+        $exceptions->renderable(function (InvalidSignatureException $e) {
+            return response()->json([
+                'message' => 'This verification link is invalid or has expired.',
+                'data' => null,
+                'status' => 403,
+                'errors' => ['This verification link is invalid or has expired.'],
+            ], 403);
+        });
+
         $exceptions->renderable(function (HttpResponseException $e) {
             return $e->getResponse();
         });
 
-        $exceptions->renderable(function (\Throwable $e) {
+        $exceptions->renderable(function (Throwable $e) {
             return response()->json([
                 'message' => 'Internal server error.',
                 'data' => null,

@@ -11,9 +11,10 @@ use App\Domain\Contracts\Repositories\UserRepositoryInterface;
 use App\Domain\Entities\User;
 use App\Domain\Exceptions\InvalidCredentialsException;
 use App\Domain\Exceptions\UserAlreadyExistsException;
+use App\Infrastructure\Notifications\VerifyEmailNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Notification;
 use Mockery;
 use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\Test;
@@ -24,6 +25,7 @@ class AuthServiceTest extends TestCase
     use RefreshDatabase;
 
     private UserRepositoryInterface|MockInterface $userRepository;
+
     private AuthService $authService;
 
     protected function setUp(): void
@@ -40,28 +42,27 @@ class AuthServiceTest extends TestCase
         parent::tearDown();
     }
 
-    private function createMockUser(array $attributes = []): User|MockInterface
+    private function createPersistedUser(array $attributes = []): User
     {
-        $user = Mockery::mock(User::class)->makePartial();
-        $user->id = $attributes['id'] ?? '1';
-        $user->email = $attributes['email'] ?? 'test@example.com';
-        $user->name = $attributes['name'] ?? 'John Doe';
-        $user->password = $attributes['password'] ?? Hash::make('password');
-
-        return $user;
+        return User::factory()->create(array_merge([
+            'email' => 'test@example.com',
+            'name' => 'John Doe',
+            'password' => Hash::make('password'),
+        ], $attributes));
     }
 
     #[Test]
     public function it_creates_a_new_user_on_signup(): void
     {
+        Notification::fake();
+
         $dto = new SignupRequestDto(
             email: 'test@example.com',
             password: 'Password123!',
             name: 'John Doe',
         );
 
-        $user = $this->createMockUser([
-            'id' => '1',
+        $user = $this->createPersistedUser([
             'email' => 'test@example.com',
             'name' => 'John Doe',
         ]);
@@ -77,19 +78,15 @@ class AuthServiceTest extends TestCase
             ->once()
             ->andReturn($user);
 
-        Auth::shouldReceive('guard')
-            ->with('web')
-            ->once()
-            ->andReturn($guard = Mockery::mock());
-        $guard->shouldReceive('login')
-            ->with($user)
-            ->once();
-
         $result = $this->authService->signup($dto);
 
-        $this->assertSame('1', $result->id);
+        $this->assertSame((string) $user->id, $result->id);
         $this->assertSame('test@example.com', $result->email);
         $this->assertSame('John Doe', $result->name);
+        $this->assertNotEmpty($result->token);
+        $this->assertNull($result->emailVerifiedAt);
+
+        Notification::assertSentTo($user, VerifyEmailNotification::class);
     }
 
     #[Test]
@@ -101,7 +98,7 @@ class AuthServiceTest extends TestCase
             name: 'John Doe',
         );
 
-        $existingUser = $this->createMockUser(['email' => 'existing@example.com']);
+        $existingUser = $this->createPersistedUser(['email' => 'existing@example.com']);
 
         $this->userRepository
             ->shouldReceive('findByEmail')
@@ -122,8 +119,7 @@ class AuthServiceTest extends TestCase
             password: 'Password123!',
         );
 
-        $user = $this->createMockUser([
-            'id' => '1',
+        $user = $this->createPersistedUser([
             'email' => 'test@example.com',
             'name' => 'John Doe',
             'password' => Hash::make('Password123!'),
@@ -135,19 +131,12 @@ class AuthServiceTest extends TestCase
             ->once()
             ->andReturn($user);
 
-        Auth::shouldReceive('guard')
-            ->with('web')
-            ->once()
-            ->andReturn($guard = Mockery::mock());
-        $guard->shouldReceive('login')
-            ->with($user)
-            ->once();
-
         $result = $this->authService->login($dto);
 
-        $this->assertSame('1', $result->id);
+        $this->assertSame((string) $user->id, $result->id);
         $this->assertSame('test@example.com', $result->email);
         $this->assertSame('John Doe', $result->name);
+        $this->assertNotEmpty($result->token);
     }
 
     #[Test]
@@ -177,7 +166,7 @@ class AuthServiceTest extends TestCase
             password: 'WrongPassword!',
         );
 
-        $user = $this->createMockUser([
+        $user = $this->createPersistedUser([
             'password' => Hash::make('CorrectPassword!'),
         ]);
 

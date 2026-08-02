@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace Tests\Feature\Auth;
 
 use App\Domain\Entities\User;
+use App\Infrastructure\Notifications\VerifyEmailNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Notification;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -35,7 +38,7 @@ class SignupTest extends TestCase
         $response->assertStatus(201)
             ->assertJsonStructure([
                 'message',
-                'data' => ['id', 'email', 'name'],
+                'data' => ['id', 'email', 'name', 'token', 'email_verified_at'],
                 'status',
                 'errors',
             ])
@@ -119,7 +122,7 @@ class SignupTest extends TestCase
     }
 
     #[Test]
-    public function it_authenticates_user_on_signup(): void
+    public function it_returns_a_bearer_token_on_signup(): void
     {
         $response = $this->postJson('/api/v1/auth/signup', $this->validPayload);
 
@@ -128,7 +131,26 @@ class SignupTest extends TestCase
         $user = User::where('email', 'newuser@example.com')->first();
 
         $this->assertNotNull($user);
-        $this->assertAuthenticatedAs($user, 'web');
+        $this->assertIsString($response->json('data.token'));
+        $this->assertNotEmpty($response->json('data.token'));
+        $this->assertDatabaseHas('personal_access_tokens', [
+            'tokenable_id' => $user->id,
+            'tokenable_type' => User::class,
+        ]);
+    }
+
+    #[Test]
+    public function it_sends_email_verification_notification_on_signup(): void
+    {
+        Notification::fake();
+
+        $response = $this->postJson('/api/v1/auth/signup', $this->validPayload);
+
+        $response->assertStatus(201);
+
+        $user = User::where('email', 'newuser@example.com')->first();
+
+        Notification::assertSentTo($user, VerifyEmailNotification::class);
     }
 
     #[Test]
@@ -140,6 +162,6 @@ class SignupTest extends TestCase
 
         $this->assertNotNull($user);
         $this->assertNotSame('StrongPass1!', $user->password);
-        $this->assertTrue(\Illuminate\Support\Facades\Hash::check('StrongPass1!', $user->password));
+        $this->assertTrue(Hash::check('StrongPass1!', $user->password));
     }
 }

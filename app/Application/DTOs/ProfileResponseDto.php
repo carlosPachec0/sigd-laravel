@@ -4,15 +4,26 @@ declare(strict_types=1);
 
 namespace App\Application\DTOs;
 
-final readonly class SignupResponseDto
+use App\Domain\Entities\User;
+
+final readonly class ProfileResponseDto
 {
     public function __construct(
         public string $id,
         public string $email,
         public string $name,
-        public string $token,
         public ?string $emailVerifiedAt = null,
     ) {}
+
+    public static function fromUser(User $user): self
+    {
+        return new self(
+            id: (string) $user->id,
+            email: $user->email,
+            name: $user->name,
+            emailVerifiedAt: $user->email_verified_at?->toISOString(),
+        );
+    }
 
     public function toArray(): array
     {
@@ -20,7 +31,6 @@ final readonly class SignupResponseDto
             'id' => $this->id,
             'email' => $this->email,
             'name' => $this->name,
-            'token' => $this->token,
             'email_verified_at' => $this->emailVerifiedAt,
         ];
     }

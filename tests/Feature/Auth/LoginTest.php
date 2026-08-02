@@ -38,7 +38,7 @@ class LoginTest extends TestCase
         $response->assertStatus(200)
             ->assertJsonStructure([
                 'message',
-                'data' => ['id', 'email', 'name'],
+                'data' => ['id', 'email', 'name', 'token', 'email_verified_at'],
                 'status',
                 'errors',
             ])
@@ -118,7 +118,7 @@ class LoginTest extends TestCase
     }
 
     #[Test]
-    public function it_authenticates_user_on_login(): void
+    public function it_returns_a_bearer_token_on_login(): void
     {
         $response = $this->postJson('/api/v1/auth/login', [
             'email' => 'user@example.com',
@@ -127,7 +127,12 @@ class LoginTest extends TestCase
 
         $response->assertStatus(200);
 
-        $this->assertAuthenticatedAs($this->user, 'web');
+        $this->assertIsString($response->json('data.token'));
+        $this->assertNotEmpty($response->json('data.token'));
+        $this->assertDatabaseHas('personal_access_tokens', [
+            'tokenable_id' => $this->user->id,
+            'tokenable_type' => User::class,
+        ]);
     }
 
     #[Test]
