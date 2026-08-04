@@ -21,7 +21,7 @@ class UserRepositoryTest extends TestCase
     {
         parent::setUp();
 
-        $this->repository = new UserRepository();
+        $this->repository = new UserRepository;
     }
 
     #[Test]
@@ -64,5 +64,48 @@ class UserRepositoryTest extends TestCase
             'email' => 'newuser@example.com',
             'name' => 'Jane Doe',
         ]);
+    }
+
+    #[Test]
+    public function it_finds_a_user_by_id(): void
+    {
+        $user = User::factory()->create();
+
+        $found = $this->repository->findById($user->id);
+
+        $this->assertNotNull($found);
+        $this->assertSame($user->id, $found->id);
+    }
+
+    #[Test]
+    public function it_returns_null_when_user_not_found_by_id(): void
+    {
+        $found = $this->repository->findById((string) Str::uuid());
+
+        $this->assertNull($found);
+    }
+
+    #[Test]
+    public function it_updates_a_user(): void
+    {
+        $user = User::factory()->create(['name' => 'Old Name']);
+
+        $updated = $this->repository->update($user, ['name' => 'New Name']);
+
+        $this->assertSame('New Name', $updated->name);
+        $this->assertDatabaseHas('users', [
+            'id' => $user->id,
+            'name' => 'New Name',
+        ]);
+    }
+
+    #[Test]
+    public function it_updates_email_verified_at_despite_it_not_being_fillable(): void
+    {
+        $user = User::factory()->create(['email_verified_at' => null]);
+
+        $updated = $this->repository->update($user, ['email_verified_at' => now()]);
+
+        $this->assertNotNull($updated->email_verified_at);
     }
 }

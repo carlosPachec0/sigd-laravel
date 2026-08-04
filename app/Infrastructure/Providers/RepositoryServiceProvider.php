@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Providers;
 
 use App\Application\Services\AuthService;
+use App\Application\Services\ProfileService;
 use App\Domain\Contracts\Repositories\UserRepositoryInterface;
 use App\Infrastructure\Repositories\UserRepository;
 use Illuminate\Support\ServiceProvider;
@@ -22,6 +23,15 @@ final class RepositoryServiceProvider extends ServiceProvider
             AuthService::class,
             function ($app) {
                 return new AuthService(
+                    $app->make(UserRepositoryInterface::class),
+                );
+            }
+        );
+
+        $this->app->bind(
+            ProfileService::class,
+            function ($app) {
+                return new ProfileService(
                     $app->make(UserRepositoryInterface::class),
                 );
             }

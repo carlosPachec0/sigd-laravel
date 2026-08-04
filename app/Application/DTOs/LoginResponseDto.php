@@ -10,6 +10,8 @@ final readonly class LoginResponseDto
         public string $id,
         public string $email,
         public string $name,
+        public string $token,
+        public ?string $emailVerifiedAt = null,
     ) {}
 
     public function toArray(): array
@@ -18,6 +20,8 @@ final readonly class LoginResponseDto
             'id' => $this->id,
             'email' => $this->email,
             'name' => $this->name,
+            'token' => $this->token,
+            'email_verified_at' => $this->emailVerifiedAt,
         ];
     }
 }
