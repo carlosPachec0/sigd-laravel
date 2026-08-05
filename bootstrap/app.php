@@ -6,6 +6,7 @@ use App\Domain\Exceptions\InvalidPasswordResetTokenException;
 use App\Domain\Exceptions\InvalidVerificationLinkException;
 use App\Domain\Exceptions\UserAlreadyExistsException;
 use App\Infrastructure\Http\Middleware\ForceJsonResponse;
+use App\Infrastructure\Http\Middleware\SecurityHeaders;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -22,6 +23,10 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->api(prepend: [
             ForceJsonResponse::class,
+        ]);
+
+        $middleware->api(append: [
+            SecurityHeaders::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
