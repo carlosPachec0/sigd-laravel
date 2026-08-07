@@ -1,10 +1,9 @@
 <?php
 
-namespace App;
+namespace App\Domain\Entities;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-
 
 class Student extends Model
 {
@@ -17,14 +16,16 @@ class Student extends Model
         'gender',
         'birth_date',
         'height',
-        'weight'
+        'weight',
     ];
 
-    public function assistance() {
+    public function assistance()
+    {
         return $this->hasMany(Assistance::class);
     }
 
-    public function payments() {
+    public function payments()
+    {
         return $this->hasMany(Payment::class);
     }
 
