@@ -1,5 +1,6 @@
 <?php
 
+use App\Infrastructure\Http\Controllers\AcademyController;
 use App\Infrastructure\Http\Controllers\AuthController;
 use App\Infrastructure\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -25,5 +26,13 @@ Route::prefix('v1')->group(function () {
         Route::get('/', [ProfileController::class, 'show']);
         Route::put('/', [ProfileController::class, 'update']);
         Route::put('password', [ProfileController::class, 'changePassword']);
+    });
+
+    Route::middleware('auth:sanctum')->prefix('academies')->group(function () {
+        Route::get('/', [AcademyController::class, 'index']);
+        Route::post('/', [AcademyController::class, 'store']);
+        Route::get('{id}', [AcademyController::class, 'show']);
+        Route::put('{id}', [AcademyController::class, 'update']);
+        Route::delete('{id}', [AcademyController::class, 'destroy']);
     });
 });

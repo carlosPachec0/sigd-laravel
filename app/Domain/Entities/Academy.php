@@ -8,26 +8,30 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Academy extends Model
 {
     use SoftDeletes;
-    
+
     protected $table = 'academies';
 
     protected $fillable = [
+        'user_id',
         'name',
         'discipline',
         'registration_fee',
         'monthly_fee',
-        'class_fee'
+        'class_fee',
     ];
 
-    public function trainer() {
-        return $this->belongsTo(Trainer::class);
+    public function trainer()
+    {
+        return $this->belongsTo(User::class);
     }
 
-    public function students() {
+    public function students()
+    {
         return $this->hasMany(Student::class);
     }
 
-    public function offers() {
+    public function offers()
+    {
         return $this->hasMany(Offer::class);
     }
 
