@@ -118,13 +118,17 @@ curl -X POST http://localhost:8000/api/v1/auth/login \
 }
 ```
 
-### SPA Authentication Flow
+### Authentication
 
-This API uses Sanctum's SPA cookie-based mode. Authentication is session-based — no tokens are returned in the JSON body.
+This API uses Sanctum's token-based. Each Authentication return a personal api tokens in the JSON body. Each token has a life time of 30 natural days.
 
-The Vue SPA must call `GET /sanctum/csrf-cookie` before signup or login to obtain the `XSRF-TOKEN` cookie. The HTTP client then sends it back as the `X-XSRF-TOKEN` header on the actual request. Laravel validates the CSRF token and starts a session via the `Set-Cookie` response header.
+The Vue SPA must call `/api/v1/auth/login` endpoint to obtain an access token and store it.
 
-Subsequent authenticated requests are made with `withCredentials: true` (or `credentials: 'include'`) so the browser sends the session cookie automatically.
+Subsequent request must send `Authentication: bearer {token}` header on each request. Laravel validates the autneticity and exiparion time of token before process the request.
+
+If a token has expired Vue must logout and send user to login page to authenticate again.
+
+Can manualy revoke a token by call  `/api/v1/auth/logout` endpoint.
 
 ## Setup
 
