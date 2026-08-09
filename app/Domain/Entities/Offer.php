@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Domain\Entities;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -14,7 +14,7 @@ class Offer extends Model
     protected $fillable = [
         'title',
         'description',
-        'price'
+        'price',
     ];
 
     protected function casts(): array

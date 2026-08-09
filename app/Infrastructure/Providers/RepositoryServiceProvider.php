@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Providers;
 
+use App\Application\Services\AcademyService;
 use App\Application\Services\AuthService;
 use App\Application\Services\ProfileService;
+use App\Domain\Contracts\Repositories\AcademyRepositoryInterface;
 use App\Domain\Contracts\Repositories\UserRepositoryInterface;
+use App\Infrastructure\Repositories\AcademyRepository;
 use App\Infrastructure\Repositories\UserRepository;
 use Illuminate\Support\ServiceProvider;
 
@@ -17,6 +20,11 @@ final class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(
             UserRepositoryInterface::class,
             UserRepository::class,
+        );
+
+        $this->app->bind(
+            AcademyRepositoryInterface::class,
+            AcademyRepository::class,
         );
 
         $this->app->bind(
@@ -33,6 +41,15 @@ final class RepositoryServiceProvider extends ServiceProvider
             function ($app) {
                 return new ProfileService(
                     $app->make(UserRepositoryInterface::class),
+                );
+            }
+        );
+
+        $this->app->bind(
+            AcademyService::class,
+            function ($app) {
+                return new AcademyService(
+                    $app->make(AcademyRepositoryInterface::class),
                 );
             }
         );
