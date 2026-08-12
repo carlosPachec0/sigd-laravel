@@ -7,9 +7,12 @@ namespace App\Infrastructure\Providers;
 use App\Application\Services\AcademyService;
 use App\Application\Services\AuthService;
 use App\Application\Services\ProfileService;
+use App\Application\Services\StudentService;
 use App\Domain\Contracts\Repositories\AcademyRepositoryInterface;
+use App\Domain\Contracts\Repositories\StudentRepositoryInterface;
 use App\Domain\Contracts\Repositories\UserRepositoryInterface;
 use App\Infrastructure\Repositories\AcademyRepository;
+use App\Infrastructure\Repositories\StudentRepository;
 use App\Infrastructure\Repositories\UserRepository;
 use Illuminate\Support\ServiceProvider;
 
@@ -25,6 +28,11 @@ final class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(
             AcademyRepositoryInterface::class,
             AcademyRepository::class,
+        );
+
+        $this->app->bind(
+            StudentRepositoryInterface::class,
+            StudentRepository::class,
         );
 
         $this->app->bind(
@@ -50,6 +58,16 @@ final class RepositoryServiceProvider extends ServiceProvider
             function ($app) {
                 return new AcademyService(
                     $app->make(AcademyRepositoryInterface::class),
+                );
+            }
+        );
+
+        $this->app->bind(
+            StudentService::class,
+            function ($app) {
+                return new StudentService(
+                    $app->make(AcademyRepositoryInterface::class),
+                    $app->make(StudentRepositoryInterface::class),
                 );
             }
         );

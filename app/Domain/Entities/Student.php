@@ -12,6 +12,7 @@ class Student extends Model
     protected $table = 'students';
 
     protected $fillable = [
+        'academy_id',
         'name',
         'gender',
         'birth_date',
@@ -29,9 +30,15 @@ class Student extends Model
         return $this->hasMany(Payment::class);
     }
 
+    public function academy()
+    {
+        return $this->belongsTo(Academy::class);
+    }
+
     protected function casts(): array
     {
         return [
+            'academy_id' => 'integer',
             'birth_date' => 'date',
             'height' => 'decimal:2',
             'weight' => 'decimal:2',
