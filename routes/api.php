@@ -3,6 +3,7 @@
 use App\Infrastructure\Http\Controllers\AcademyController;
 use App\Infrastructure\Http\Controllers\AuthController;
 use App\Infrastructure\Http\Controllers\ProfileController;
+use App\Infrastructure\Http\Controllers\StudentController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
@@ -34,5 +35,13 @@ Route::prefix('v1')->group(function () {
         Route::get('{id}', [AcademyController::class, 'show']);
         Route::put('{id}', [AcademyController::class, 'update']);
         Route::delete('{id}', [AcademyController::class, 'destroy']);
+
+        Route::prefix('{academyId}/students')->group(function () {
+            Route::get('/', [StudentController::class, 'index']);
+            Route::post('/', [StudentController::class, 'store']);
+            Route::get('{studentId}', [StudentController::class, 'show']);
+            Route::put('{studentId}', [StudentController::class, 'update']);
+            Route::delete('{studentId}', [StudentController::class, 'destroy']);
+        });
     });
 });

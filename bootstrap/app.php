@@ -5,6 +5,7 @@ use App\Domain\Exceptions\InvalidCredentialsException;
 use App\Domain\Exceptions\InvalidCurrentPasswordException;
 use App\Domain\Exceptions\InvalidPasswordResetTokenException;
 use App\Domain\Exceptions\InvalidVerificationLinkException;
+use App\Domain\Exceptions\StudentNotFoundException;
 use App\Domain\Exceptions\UserAlreadyExistsException;
 use App\Infrastructure\Http\Middleware\ForceJsonResponse;
 use App\Infrastructure\Http\Middleware\SecurityHeaders;
@@ -54,6 +55,15 @@ return Application::configure(basePath: dirname(__DIR__))
         });
 
         $exceptions->renderable(function (AcademyNotFoundException $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+                'data' => null,
+                'status' => 404,
+                'errors' => [$e->getMessage()],
+            ], 404);
+        });
+
+        $exceptions->renderable(function (StudentNotFoundException $e) {
             return response()->json([
                 'message' => $e->getMessage(),
                 'data' => null,
