@@ -2,6 +2,7 @@
 
 use App\Infrastructure\Http\Controllers\AcademyController;
 use App\Infrastructure\Http\Controllers\AuthController;
+use App\Infrastructure\Http\Controllers\PaymentController;
 use App\Infrastructure\Http\Controllers\ProfileController;
 use App\Infrastructure\Http\Controllers\StudentController;
 use Illuminate\Support\Facades\Route;
@@ -42,6 +43,14 @@ Route::prefix('v1')->group(function () {
             Route::get('{studentId}', [StudentController::class, 'show']);
             Route::put('{studentId}', [StudentController::class, 'update']);
             Route::delete('{studentId}', [StudentController::class, 'destroy']);
+
+            Route::prefix('{studentId}/payments')->group(function () {
+                Route::get('/', [PaymentController::class, 'index']);
+                Route::post('/', [PaymentController::class, 'store']);
+                Route::get('{paymentId}', [PaymentController::class, 'show']);
+                Route::put('{paymentId}', [PaymentController::class, 'update']);
+                Route::delete('{paymentId}', [PaymentController::class, 'destroy']);
+            });
         });
     });
 });
