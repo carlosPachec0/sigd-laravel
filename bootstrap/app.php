@@ -1,6 +1,8 @@
 <?php
 
 use App\Domain\Exceptions\AcademyNotFoundException;
+use App\Domain\Exceptions\AssistanceAlreadyExistsException;
+use App\Domain\Exceptions\AssistanceNotFoundException;
 use App\Domain\Exceptions\InvalidCredentialsException;
 use App\Domain\Exceptions\InvalidCurrentPasswordException;
 use App\Domain\Exceptions\InvalidPasswordResetTokenException;
@@ -80,6 +82,24 @@ return Application::configure(basePath: dirname(__DIR__))
                 'status' => 404,
                 'errors' => [$e->getMessage()],
             ], 404);
+        });
+
+        $exceptions->renderable(function (AssistanceNotFoundException $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+                'data' => null,
+                'status' => 404,
+                'errors' => [$e->getMessage()],
+            ], 404);
+        });
+
+        $exceptions->renderable(function (AssistanceAlreadyExistsException $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+                'data' => null,
+                'status' => 409,
+                'errors' => [$e->getMessage()],
+            ], 409);
         });
 
         $exceptions->renderable(function (InvalidCredentialsException $e) {

@@ -1,6 +1,7 @@
 <?php
 
 use App\Infrastructure\Http\Controllers\AcademyController;
+use App\Infrastructure\Http\Controllers\AssistanceController;
 use App\Infrastructure\Http\Controllers\AuthController;
 use App\Infrastructure\Http\Controllers\PaymentController;
 use App\Infrastructure\Http\Controllers\ProfileController;
@@ -50,6 +51,14 @@ Route::prefix('v1')->group(function () {
                 Route::get('{paymentId}', [PaymentController::class, 'show']);
                 Route::put('{paymentId}', [PaymentController::class, 'update']);
                 Route::delete('{paymentId}', [PaymentController::class, 'destroy']);
+            });
+
+            Route::prefix('{studentId}/assistance')->group(function () {
+                Route::get('/', [AssistanceController::class, 'index']);
+                Route::post('/', [AssistanceController::class, 'store']);
+                Route::get('{assistanceId}', [AssistanceController::class, 'show']);
+                Route::put('{assistanceId}', [AssistanceController::class, 'update']);
+                Route::delete('{assistanceId}', [AssistanceController::class, 'destroy']);
             });
         });
     });
