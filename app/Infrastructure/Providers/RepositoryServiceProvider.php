@@ -5,15 +5,18 @@ declare(strict_types=1);
 namespace App\Infrastructure\Providers;
 
 use App\Application\Services\AcademyService;
+use App\Application\Services\AssistanceService;
 use App\Application\Services\AuthService;
 use App\Application\Services\PaymentService;
 use App\Application\Services\ProfileService;
 use App\Application\Services\StudentService;
 use App\Domain\Contracts\Repositories\AcademyRepositoryInterface;
+use App\Domain\Contracts\Repositories\AssistanceRepositoryInterface;
 use App\Domain\Contracts\Repositories\PaymentRepositoryInterface;
 use App\Domain\Contracts\Repositories\StudentRepositoryInterface;
 use App\Domain\Contracts\Repositories\UserRepositoryInterface;
 use App\Infrastructure\Repositories\AcademyRepository;
+use App\Infrastructure\Repositories\AssistanceRepository;
 use App\Infrastructure\Repositories\PaymentRepository;
 use App\Infrastructure\Repositories\StudentRepository;
 use App\Infrastructure\Repositories\UserRepository;
@@ -41,6 +44,11 @@ final class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(
             PaymentRepositoryInterface::class,
             PaymentRepository::class,
+        );
+
+        $this->app->bind(
+            AssistanceRepositoryInterface::class,
+            AssistanceRepository::class,
         );
 
         $this->app->bind(
@@ -87,6 +95,17 @@ final class RepositoryServiceProvider extends ServiceProvider
                     $app->make(AcademyRepositoryInterface::class),
                     $app->make(StudentRepositoryInterface::class),
                     $app->make(PaymentRepositoryInterface::class),
+                );
+            }
+        );
+
+        $this->app->bind(
+            AssistanceService::class,
+            function ($app) {
+                return new AssistanceService(
+                    $app->make(AcademyRepositoryInterface::class),
+                    $app->make(StudentRepositoryInterface::class),
+                    $app->make(AssistanceRepositoryInterface::class),
                 );
             }
         );

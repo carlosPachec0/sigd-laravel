@@ -15,8 +15,10 @@ return new class extends Migration
             $table->id();
             $table->integer('student_id')->unsigned();
             $table->date('date');
+            $table->timestamps();
 
             $table->foreign('student_id')->references('id')->on('students');
+            $table->unique(['student_id', 'date']);
         });
     }
 
